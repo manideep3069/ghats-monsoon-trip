@@ -105,7 +105,11 @@ input[type=range]{width:100%;accent-color:var(--fire);height:28px}
 .day{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--bord);border-left:3px solid var(--bordhot);
   border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color .3s,box-shadow .3s}
 .day.today{border-left-color:var(--fire);box-shadow:0 0 30px rgba(255,140,26,.18)}
-.dh{display:flex;align-items:center;gap:14px;padding:15px 16px;cursor:pointer;user-select:none}
+.dh{display:flex;align-items:center;gap:14px;padding:15px 16px;cursor:pointer;user-select:none;position:relative;overflow:hidden}
+.sheen{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 25%,rgba(255,210,140,.22) 50%,transparent 75%);transform:translateX(-130%)}
+.day.open .sheen{animation:sweep .9s ease}
+@keyframes sweep{from{transform:translateX(-130%)}to{transform:translateX(130%)}}
 .dn{flex-shrink:0;text-align:center;width:56px}
 .dn .ch{font-family:'Bebas Neue',sans-serif;font-size:.62rem;letter-spacing:2px;color:var(--dim)}
 .dn .num{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:.9;
@@ -113,9 +117,16 @@ input[type=range]{width:100%;accent-color:var(--fire);height:28px}
 .dt{flex:1}.dt .t{font-weight:600;font-size:.95rem}.dt .s{color:var(--dim);font-size:.77rem;font-style:italic}
 .chev{color:var(--dim);transition:transform .35s}
 .day.open .chev{transform:rotate(180deg)}
-.db{max-height:0;overflow:hidden;transition:max-height .5s ease}
+.db{max-height:0;overflow:hidden;transition:max-height .6s ease}
 .day.open .db{max-height:700px}
-.dbi{padding:0 16px 16px;color:#d8c9ae;font-size:.87rem}
+.dbi{padding:0 16px 16px;color:#d8c9ae;font-size:.87rem;
+  clip-path:inset(0 0 100% 0);transition:clip-path .75s cubic-bezier(.7,0,.2,1) .08s}
+.day.open .dbi{clip-path:inset(0 0 -2% 0)}
+/* tap sparks */
+.spark{position:fixed;width:5px;height:5px;border-radius:50%;pointer-events:none;z-index:60;left:0;top:0;
+  background:radial-gradient(circle,#ffd98a,#ff8c1a);
+  animation:fly .8s cubic-bezier(.2,.6,.4,1) forwards}
+@keyframes fly{from{transform:translate(0,0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(.15);opacity:0}}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .chip{font-size:.71rem;padding:4px 11px;border-radius:999px;border:1px solid var(--bord);color:var(--dim)}
 .chip.hot{border-color:#8a5a1a;color:var(--amber)}
@@ -169,8 +180,8 @@ input[type=range]{width:100%;accent-color:var(--fire);height:28px}
     <div class="panel rv">
       <div class="ctl">
         <label>how many of us? <b id="pplV">9</b></label>
-        <input type="range" id="ppl" min="6" max="9" step="1" value="9" oninput="calc()">
-        <div class="why">min 6, max 9 — below 6 the per-head cost gets ugly, above 9 we need a bus 🚌</div>
+        <input type="range" id="ppl" min="2" max="9" step="1" value="9" oninput="calc()">
+        <div class="why">2 to 9 — smaller squad, bigger per-head bite. above 9 we need a bus 🚌</div>
       </div>
       <div class="ctl">
         <label>cars</label>
@@ -295,7 +306,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x,i){
    if(c.indexOf('hot|')===0)return '<span class="chip hot">'+c.slice(4)+'</span>';
    return '<span class="chip">'+c+'</span>';}).join('');
  return '<div class="day rv'+(i===todayIdx?' today':'')+'" id="day'+i+'">'
-  +'<div class="dh" onclick="tog('+i+')">'
+  +'<div class="dh" onclick="tog('+i+')"><div class="sheen"></div>'
   +'<div class="dn"><div class="ch">CHAPTER</div><div class="num">'+(i+1<10?'0':'')+(i+1)+'</div></div>'
   +'<div class="dt"><div class="t">'+x.t+'</div><div class="s">'+x.s+' · '+x.w+(i===todayIdx?' · 🔥 TODAY':'')+'</div></div>'
   +'<div class="chev">▼</div></div>'
@@ -335,17 +346,20 @@ function calc(){
  if(ppl>7){cars=2;c1.disabled=true;}
  else{c1.disabled=false;if(!carManual)cars=(ppl<=6?1:2);}
  c1.classList.toggle('on',cars===1);c2.classList.toggle('on',cars===2);
+ var small=ppl<=4;
+ c1.textContent=small?'🚗 1 car (5-seater)':'🚗 1 car (7-seater)';
  document.getElementById('carNote').textContent=
    ppl>7?(ppl+' people + a week of luggage won\'t fit in one car — 2 cars, no debate'):
    (cars===1&&ppl===7?'7 in a 7-seater works but luggage rides on laps — think about it':
-   (cars===1?'one 7-seater = the cheapest way to roll':'two cars = space, comfort + a backup if one acts up'));
+   (cars===1?(small?'small squad = one 5-seater does the whole job':'one 7-seater = the cheapest way to roll'):
+   'two cars = space, comfort + a backup if one acts up'));
  document.getElementById('pplV').textContent=ppl;
  document.getElementById('roomV').textContent=fmt(room);
  document.getElementById('foodV').textContent=fmt(food);
  document.getElementById('fuelV').textContent='₹'+fuelP;
  document.getElementById('milV').textContent=mil;
  var km=1560,days=8,nights=7;
- var rental=cars===1?3200*days:2*2300*days;
+ var rental=cars===1?(ppl<=4?2300:3200)*days:2*2300*days;
  var fuel=cars*(km/mil)*fuelP;
  var tolls=1250*cars;
  var units=ppl<=6?1:2;
@@ -462,6 +476,19 @@ function loop(){
   if(e.y<-20){e.y=cv.height+20;e.x=Math.random()*cv.width;}}
  requestAnimationFrame(loop);}
 loop();
+
+/* ---------- tap sparks ---------- */
+function sparkBurst(x,y){
+ for(var i=0;i<14;i++){var s=document.createElement('i');s.className='spark';
+  var a=Math.random()*6.283,v=26+Math.random()*74;
+  s.style.left=x+'px';s.style.top=y+'px';
+  s.style.setProperty('--dx',(Math.cos(a)*v)+'px');
+  s.style.setProperty('--dy',(Math.sin(a)*v-34)+'px');
+  document.body.appendChild(s);
+  (function(el){setTimeout(function(){el.remove()},850)})(s);}}
+document.addEventListener('click',function(e){
+ var t=e.target.closest('.dh, .check, .carseg button, .tog, .rule');
+ if(t)sparkBurst(e.clientX,e.clientY);});
 
 /* ---------- reveal (safe: content visible even if this fails) ---------- */
 try{
