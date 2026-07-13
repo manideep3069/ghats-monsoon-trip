@@ -41,18 +41,9 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:3.4rem;line-height:.95;margin:1
 @keyframes heat{0%,100%{filter:drop-shadow(0 0 18px rgba(255,140,26,.25))}50%{filter:drop-shadow(0 0 34px rgba(255,140,26,.5))}}
 .tagline{color:var(--dim);font-size:.92rem;font-style:italic}
 .rule-gold{width:140px;height:2px;margin:18px auto;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.count{display:flex;gap:9px;justify-content:center;margin:8px 0 6px}
-.cbox{background:linear-gradient(180deg,#181009,#0e0905);border:1px solid var(--bord);border-radius:10px;padding:12px 0 8px;width:74px;
-  box-shadow:inset 0 1px 0 #ffffff10, 0 6px 20px #00000080}
-.cbox b{display:block;font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--amber);letter-spacing:2px;line-height:1}
-.cbox small{color:var(--dim);font-size:.62rem;letter-spacing:2px;text-transform:uppercase}
-.countLabel{color:var(--dim);font-size:.85rem;margin-top:6px}
-.hero-btns{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
-.pill{border:1px solid var(--bordhot);background:linear-gradient(180deg,#1c120a,#120b06);color:var(--gold);
-  border-radius:999px;padding:11px 20px;font-size:.85rem;font-family:inherit;cursor:pointer;transition:.25s}
-.pill:active{transform:scale(.95)}
-.pill.hot{background:linear-gradient(180deg,#ff9c2b,#c8641a);color:#1a0d02;font-weight:700;border:0;
-  box-shadow:0 0 26px rgba(255,140,26,.35)}
+.dash{display:flex;flex-direction:column;align-items:center;margin-top:2px}
+#gauge{max-width:88vw;filter:drop-shadow(0 0 34px rgba(255,140,26,.18))}
+.countLabel{color:var(--dim);font-size:.85rem;margin-top:2px}
 
 /* sections */
 .sect{margin-top:40px}
@@ -166,16 +157,9 @@ input[type=range]{width:100%;accent-color:var(--fire);height:28px}
     <h1>GHATS<br>MONSOON LOOP</h1>
     <div class="tagline">"eight days. nine places. one monsoon." · Aug 1 → 8</div>
     <div class="rule-gold"></div>
-    <div class="count">
-      <div class="cbox"><b id="cd">0</b><small>days</small></div>
-      <div class="cbox"><b id="ch">0</b><small>hrs</small></div>
-      <div class="cbox"><b id="cm">0</b><small>min</small></div>
-      <div class="cbox"><b id="cs">0</b><small>sec</small></div>
-    </div>
-    <div class="countLabel" id="countLabel">until the 12:45 AM roll-out 🏍️</div>
-    <div class="hero-btns">
-      <button class="pill hot" onclick="shareIt()">⚔️ SEND TO THE GROUP</button>
-      <button class="pill" id="fxBtn" onclick="toggleFx()">🔥 embers: on</button>
+    <div class="dash">
+      <canvas id="gauge" width="360" height="330"></canvas>
+      <div class="countLabel" id="countLabel">needle hits zero · 12:45 AM, Aug 1 · IST</div>
     </div>
   </div>
 
@@ -389,56 +373,95 @@ function calc(){
 }
 calc();
 
-/* ---------- countdown ---------- */
-var T0=new Date('2026-08-01T00:45:00+05:30');
-function tick(){
- var diff=T0.getTime()-Date.now();
- var lbl=document.getElementById('countLabel');
- if(diff<=0){var end=new Date('2026-08-08T19:00:00+05:30');
-  if(Date.now()<end.getTime()){lbl.textContent='WE ARE ON THE ROAD RIGHT NOW 🏔️';diff=end.getTime()-Date.now();}
-  else{lbl.textContent='trip done — the group chat is now 90% photos 📸';diff=0;}}
- document.getElementById('cd').textContent=Math.floor(diff/86400000);
- document.getElementById('ch').textContent=Math.floor(diff/3600000)%24;
- document.getElementById('cm').textContent=Math.floor(diff/60000)%60;
- document.getElementById('cs').textContent=Math.floor(diff/1000)%60;
+/* ---------- tachometer countdown ---------- */
+var T0=new Date('2026-08-01T00:45:00+05:30').getTime();
+var TEND=new Date('2026-08-08T19:00:00+05:30').getTime();
+var g=document.getElementById('gauge'),gc=g.getContext('2d');
+var CXg=180,CYg=172,Rg=138;
+var A0=Math.PI*0.75,A1=Math.PI*2.25; // 270° sweep
+function pad(n){return (n<10?'0':'')+n}
+function drawGauge(){
+ var now=Date.now(),lbl=document.getElementById('countLabel');
+ var diff=T0-now,label='DAYS TO ROLL-OUT';
+ if(diff<=0){
+  if(now<TEND){diff=TEND-now;label='DAYS TO HOME';lbl.textContent='WE ARE ON THE ROAD RIGHT NOW 🏔️';}
+  else{diff=0;label='TRIP COMPLETE';lbl.textContent='trip done — group chat is now 90% photos 📸';}}
+ var d=Math.floor(diff/86400000),h=Math.floor(diff/3600000)%24,
+     m=Math.floor(diff/60000)%60,s=Math.floor(diff/1000)%60;
+ var secFrac=(diff%60000)/60000; // needle: fraction of current minute remaining
+ gc.clearRect(0,0,360,330);
+ // face
+ var grad=gc.createRadialGradient(CXg,CYg,20,CXg,CYg,Rg+20);
+ grad.addColorStop(0,'#1c1007');grad.addColorStop(.75,'#0d0704');grad.addColorStop(1,'#070503');
+ gc.fillStyle=grad;gc.beginPath();gc.arc(CXg,CYg,Rg+18,0,7);gc.fill();
+ gc.strokeStyle='#5c3a15';gc.lineWidth=2;gc.beginPath();gc.arc(CXg,CYg,Rg+18,0,7);gc.stroke();
+ gc.strokeStyle='#2a1d10';gc.lineWidth=1;gc.beginPath();gc.arc(CXg,CYg,Rg+10,0,7);gc.stroke();
+ // ticks
+ for(var i=0;i<=60;i++){
+  var a=A0+(A1-A0)*i/60,big=i%5===0;
+  var r1=Rg-(big?16:9);
+  gc.strokeStyle=big?'#e8c47c':'#4a331c';gc.lineWidth=big?2.5:1;
+  gc.beginPath();
+  gc.moveTo(CXg+Math.cos(a)*r1,CYg+Math.sin(a)*r1);
+  gc.lineTo(CXg+Math.cos(a)*Rg,CYg+Math.sin(a)*Rg);
+  gc.stroke();
+  if(big){var rt=Rg-28;
+   gc.fillStyle='#9c8a70';gc.font='11px "Space Grotesk"';gc.textAlign='center';gc.textBaseline='middle';
+   gc.fillText(i,CXg+Math.cos(a)*rt,CYg+Math.sin(a)*rt);}}
+ // amber progress arc (seconds sweeping like RPM)
+ var aNeedle=A0+(A1-A0)*(1-secFrac);
+ gc.save();gc.shadowColor='#ff8c1a';gc.shadowBlur=16;
+ gc.strokeStyle='rgba(255,140,26,.85)';gc.lineWidth=5;gc.lineCap='round';
+ gc.beginPath();gc.arc(CXg,CYg,Rg+4,A0,aNeedle);gc.stroke();gc.restore();
+ // needle
+ gc.save();gc.shadowColor='#ffb347';gc.shadowBlur=22;
+ gc.strokeStyle='#ffcf7a';gc.lineWidth=3.5;gc.lineCap='round';
+ gc.beginPath();gc.moveTo(CXg-Math.cos(aNeedle)*16,CYg-Math.sin(aNeedle)*16);
+ gc.lineTo(CXg+Math.cos(aNeedle)*(Rg-20),CYg+Math.sin(aNeedle)*(Rg-20));gc.stroke();
+ gc.fillStyle='#ffb347';gc.beginPath();gc.arc(CXg,CYg,7,0,7);gc.fill();
+ gc.restore();
+ // hub cover + digital cluster
+ gc.fillStyle='#0a0603';gc.beginPath();gc.arc(CXg,CYg+26,64,0,7);gc.fill();
+ gc.strokeStyle='#2a1d10';gc.beginPath();gc.arc(CXg,CYg+26,64,0,7);gc.stroke();
+ gc.textAlign='center';
+ gc.fillStyle='#ffb347';gc.font='46px "Bebas Neue"';
+ gc.save();gc.shadowColor='#ff8c1a';gc.shadowBlur=14;
+ gc.fillText(d,CXg,CYg+14);gc.restore();
+ gc.fillStyle='#9c8a70';gc.font='9px "Space Grotesk"';gc.fillText(label,CXg,CYg+32);
+ gc.fillStyle='#e8c47c';gc.font='20px "Bebas Neue"';
+ gc.fillText(pad(h)+':'+pad(m)+':'+pad(s),CXg,CYg+56);
+ // odo footer
+ gc.fillStyle='#7a6a52';gc.font='10px "Space Grotesk"';
+ gc.fillText('ODO 1,550 KM · 8 DAYS · 9 STOPS',CXg,CYg+Rg+2);
+ requestAnimationFrame(drawGauge);
 }
-tick();setInterval(tick,1000);
+requestAnimationFrame(drawGauge);
 
-/* ---------- embers + warm rain ---------- */
+/* ---------- embers + dense warm rain (always on) ---------- */
 var cv=document.getElementById('fx'),cx=cv.getContext('2d');
-var fxOn=true,embers=[],drops=[];
+var embers=[],drops=[];
 function sizeCv(){cv.width=innerWidth;cv.height=innerHeight;}
 sizeCv();addEventListener('resize',sizeCv);
-for(var i=0;i<34;i++)embers.push({x:Math.random()*innerWidth,y:innerHeight+Math.random()*innerHeight,
+for(var i=0;i<38;i++)embers.push({x:Math.random()*innerWidth,y:innerHeight+Math.random()*innerHeight,
  r:1+Math.random()*2.4,v:.35+Math.random()*.85,sway:Math.random()*Math.PI*2,o:.25+Math.random()*.5});
-for(var j=0;j<55;j++)drops.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
- l:9+Math.random()*13,v:4.5+Math.random()*5,o:.05+Math.random()*.12});
+for(var j=0;j<190;j++)drops.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+ l:12+Math.random()*22,v:7+Math.random()*7,o:.10+Math.random()*.22,w:.8+Math.random()*.9});
 function loop(){
  cx.clearRect(0,0,cv.width,cv.height);
- if(fxOn){
-  cx.lineWidth=1;
-  for(var k=0;k<drops.length;k++){var d=drops[k];
-   cx.strokeStyle='rgba(255,190,120,'+d.o+')';
-   cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-1.5,d.y+d.l);cx.stroke();
-   d.y+=d.v;d.x-=.5;
-   if(d.y>cv.height){d.y=-20;d.x=Math.random()*(cv.width+40);}}
-  for(var m=0;m<embers.length;m++){var e=embers[m];
-   e.sway+=.02;var ex=e.x+Math.sin(e.sway)*14;
-   var g=cx.createRadialGradient(ex,e.y,0,ex,e.y,e.r*4);
-   g.addColorStop(0,'rgba(255,170,60,'+e.o+')');g.addColorStop(1,'rgba(255,100,20,0)');
-   cx.fillStyle=g;cx.beginPath();cx.arc(ex,e.y,e.r*4,0,7);cx.fill();
-   e.y-=e.v;
-   if(e.y<-20){e.y=cv.height+20;e.x=Math.random()*cv.width;}}}
+ for(var k=0;k<drops.length;k++){var d=drops[k];
+  cx.strokeStyle='rgba(255,200,140,'+d.o+')';cx.lineWidth=d.w;
+  cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-2.5,d.y+d.l);cx.stroke();
+  d.y+=d.v;d.x-=.8;
+  if(d.y>cv.height){d.y=-25;d.x=Math.random()*(cv.width+60);}}
+ for(var m=0;m<embers.length;m++){var e=embers[m];
+  e.sway+=.02;var ex=e.x+Math.sin(e.sway)*14;
+  var g2=cx.createRadialGradient(ex,e.y,0,ex,e.y,e.r*4);
+  g2.addColorStop(0,'rgba(255,170,60,'+e.o+')');g2.addColorStop(1,'rgba(255,100,20,0)');
+  cx.fillStyle=g2;cx.beginPath();cx.arc(ex,e.y,e.r*4,0,7);cx.fill();
+  e.y-=e.v;
+  if(e.y<-20){e.y=cv.height+20;e.x=Math.random()*cv.width;}}
  requestAnimationFrame(loop);}
 loop();
-function toggleFx(){fxOn=!fxOn;document.getElementById('fxBtn').textContent='🔥 embers: '+(fxOn?'on':'off');}
-
-/* ---------- share ---------- */
-function shareIt(){
- var data={title:'Ghats Monsoon Loop · Aug 1–8',text:'our trip plan — dates, route, money math, everything. tap around 👇',url:location.href};
- if(navigator.share){navigator.share(data).catch(function(){});}
- else if(navigator.clipboard){navigator.clipboard.writeText(location.href).then(function(){alert('link copied — paste it in the group 📋')});}
-}
 
 /* ---------- reveal (safe: content visible even if this fails) ---------- */
 try{
