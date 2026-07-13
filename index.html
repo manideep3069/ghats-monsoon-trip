@@ -41,9 +41,38 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:3.4rem;line-height:.95;margin:1
 @keyframes heat{0%,100%{filter:drop-shadow(0 0 18px rgba(255,140,26,.25))}50%{filter:drop-shadow(0 0 34px rgba(255,140,26,.5))}}
 .tagline{color:var(--dim);font-size:.92rem;font-style:italic}
 .rule-gold{width:140px;height:2px;margin:18px auto;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.dash{display:flex;flex-direction:column;align-items:center;margin-top:2px}
-#gauge{max-width:88vw;filter:drop-shadow(0 0 34px rgba(255,140,26,.18))}
-.countLabel{color:var(--dim);font-size:.85rem;margin-top:2px}
+.dash{display:flex;flex-direction:column;align-items:center;margin-top:12px}
+.board{background:linear-gradient(180deg,#14100a,#0b0805);border:1px solid var(--bordhot);border-radius:14px;
+  padding:14px 14px 12px;box-shadow:0 16px 44px #000000b0, inset 0 1px 0 #ffffff0d;max-width:100%}
+.board-top{display:flex;justify-content:center;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-bottom:12px;
+  font-family:'Bebas Neue',sans-serif;letter-spacing:2px;font-size:.78rem;color:var(--dim)}
+.board-top .fl{color:var(--gold)}
+.status{color:#1a0d02;background:linear-gradient(180deg,#ffb347,#c8641a);padding:2px 10px;border-radius:4px;
+  animation:blinkst 2.4s ease-in-out infinite}
+@keyframes blinkst{0%,100%{opacity:1}50%{opacity:.5}}
+.rows{display:flex;gap:7px;align-items:flex-start;justify-content:center}
+.grp{text-align:center}
+.cells{display:flex;gap:3px}
+.fcell{width:34px;height:50px;border-radius:6px;background:linear-gradient(180deg,#1f160c 48%,#120c07 52%);
+  border:1px solid #000;position:relative;display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:2.1rem;color:var(--amber);
+  box-shadow:inset 0 2px 6px #00000090, 0 3px 8px #00000070;
+  transition:transform .13s ease-in;text-shadow:0 0 12px rgba(255,140,26,.35)}
+.fcell:after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:#000000dd}
+.fcell.flip{transform:rotateX(86deg)}
+.glabel{font-size:.6rem;letter-spacing:2px;color:var(--dim);margin-top:6px;text-transform:uppercase;font-family:'Bebas Neue',sans-serif}
+.colon{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--bordhot);padding-top:9px}
+.countLabel{color:var(--dim);font-size:.85rem;margin-top:10px}
+/* rain toggle + lightning */
+#rainT{position:fixed;top:14px;right:14px;z-index:40;border:1px solid var(--bordhot);
+  background:linear-gradient(180deg,#1c120a,#120b06);color:var(--gold);border-radius:999px;
+  padding:9px 14px;font-size:.76rem;font-family:inherit;cursor:pointer;box-shadow:0 6px 20px #000000a0;
+  max-width:52vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rainT:active{transform:scale(.94)}
+#flash{position:fixed;inset:0;z-index:35;pointer-events:none;opacity:0;background:
+  radial-gradient(ellipse 80% 60% at 60% 0%,#fff8e8,#ffd98a44 55%,transparent 78%)}
+#flash.zap{animation:zap .55s ease-out}
+@keyframes zap{0%{opacity:0}8%{opacity:.95}18%{opacity:.12}30%{opacity:.75}45%{opacity:.08}60%{opacity:.4}100%{opacity:0}}
 
 /* sections */
 .sect{margin-top:40px}
@@ -161,6 +190,8 @@ input[type=range]{width:100%;accent-color:var(--fire);height:28px}
 <div class="stage"></div>
 <canvas id="fx"></canvas>
 <div class="vignette"></div>
+<div id="flash"></div>
+<button id="rainT" onclick="toggleRain()">🌧️ rain: ON</button>
 
 <div class="wrap">
   <div class="hero">
@@ -169,8 +200,19 @@ input[type=range]{width:100%;accent-color:var(--fire);height:28px}
     <div class="tagline">"eight days. nine places. one monsoon." · Aug 1 → 8</div>
     <div class="rule-gold"></div>
     <div class="dash">
-      <canvas id="gauge" width="360" height="330"></canvas>
-      <div class="countLabel" id="countLabel">needle hits zero · 12:45 AM, Aug 1 · IST</div>
+      <div class="board">
+        <div class="board-top"><span>✈ DEPARTURES</span><span class="fl">GHATS LOOP · GATE: BANDIPUR 6 AM</span><span class="status" id="stat">ON TIME</span></div>
+        <div class="rows">
+          <div class="grp"><div class="cells" id="gD"></div><div class="glabel">days</div></div>
+          <div class="colon">:</div>
+          <div class="grp"><div class="cells" id="gH"></div><div class="glabel">hrs</div></div>
+          <div class="colon">:</div>
+          <div class="grp"><div class="cells" id="gM"></div><div class="glabel">min</div></div>
+          <div class="colon">:</div>
+          <div class="grp"><div class="cells" id="gS"></div><div class="glabel">sec</div></div>
+        </div>
+      </div>
+      <div class="countLabel" id="countLabel">board hits 00:00:00:00 at 12:45 AM, Aug 1 · IST</div>
     </div>
   </div>
 
@@ -387,69 +429,42 @@ function calc(){
 }
 calc();
 
-/* ---------- tachometer countdown ---------- */
+/* ---------- split-flap departure board ---------- */
 var T0=new Date('2026-08-01T00:45:00+05:30').getTime();
 var TEND=new Date('2026-08-08T19:00:00+05:30').getTime();
-var g=document.getElementById('gauge'),gc=g.getContext('2d');
-var CXg=180,CYg=172,Rg=138;
-var A0=Math.PI*0.75,A1=Math.PI*2.25; // 270° sweep
 function pad(n){return (n<10?'0':'')+n}
-function drawGauge(){
- var now=Date.now(),lbl=document.getElementById('countLabel');
- var diff=T0-now,label='DAYS TO ROLL-OUT';
+function mkCells(id){var c=document.getElementById(id);
+ c.innerHTML='<div class="fcell">0</div><div class="fcell">0</div>';return c.children;}
+var CD=mkCells('gD'),CH=mkCells('gH'),CM=mkCells('gM'),CS=mkCells('gS');
+function setCell(cell,v){
+ if(cell.textContent===v)return;
+ cell.classList.add('flip');
+ setTimeout(function(){cell.textContent=v;cell.classList.remove('flip');},135);}
+function setGrp(cells,n){var s=pad(n);setCell(cells[0],s[0]);setCell(cells[1],s[1]);}
+function tick(){
+ var now=Date.now(),diff=T0-now;
+ var lbl=document.getElementById('countLabel'),st=document.getElementById('stat');
  if(diff<=0){
-  if(now<TEND){diff=TEND-now;label='DAYS TO HOME';lbl.textContent='WE ARE ON THE ROAD RIGHT NOW 🏔️';}
-  else{diff=0;label='TRIP COMPLETE';lbl.textContent='trip done — group chat is now 90% photos 📸';}}
- var d=Math.floor(diff/86400000),h=Math.floor(diff/3600000)%24,
-     m=Math.floor(diff/60000)%60,s=Math.floor(diff/1000)%60;
- var secFrac=(diff%60000)/60000; // needle: fraction of current minute remaining
- gc.clearRect(0,0,360,330);
- // face
- var grad=gc.createRadialGradient(CXg,CYg,20,CXg,CYg,Rg+20);
- grad.addColorStop(0,'#1c1007');grad.addColorStop(.75,'#0d0704');grad.addColorStop(1,'#070503');
- gc.fillStyle=grad;gc.beginPath();gc.arc(CXg,CYg,Rg+18,0,7);gc.fill();
- gc.strokeStyle='#5c3a15';gc.lineWidth=2;gc.beginPath();gc.arc(CXg,CYg,Rg+18,0,7);gc.stroke();
- gc.strokeStyle='#2a1d10';gc.lineWidth=1;gc.beginPath();gc.arc(CXg,CYg,Rg+10,0,7);gc.stroke();
- // ticks
- for(var i=0;i<=60;i++){
-  var a=A0+(A1-A0)*i/60,big=i%5===0;
-  var r1=Rg-(big?16:9);
-  gc.strokeStyle=big?'#e8c47c':'#4a331c';gc.lineWidth=big?2.5:1;
-  gc.beginPath();
-  gc.moveTo(CXg+Math.cos(a)*r1,CYg+Math.sin(a)*r1);
-  gc.lineTo(CXg+Math.cos(a)*Rg,CYg+Math.sin(a)*Rg);
-  gc.stroke();
-  if(big){var rt=Rg-28;
-   gc.fillStyle='#9c8a70';gc.font='11px "Space Grotesk"';gc.textAlign='center';gc.textBaseline='middle';
-   gc.fillText(i,CXg+Math.cos(a)*rt,CYg+Math.sin(a)*rt);}}
- // amber progress arc (seconds sweeping like RPM)
- var aNeedle=A0+(A1-A0)*(1-secFrac);
- gc.save();gc.shadowColor='#ff8c1a';gc.shadowBlur=16;
- gc.strokeStyle='rgba(255,140,26,.85)';gc.lineWidth=5;gc.lineCap='round';
- gc.beginPath();gc.arc(CXg,CYg,Rg+4,A0,aNeedle);gc.stroke();gc.restore();
- // needle
- gc.save();gc.shadowColor='#ffb347';gc.shadowBlur=22;
- gc.strokeStyle='#ffcf7a';gc.lineWidth=3.5;gc.lineCap='round';
- gc.beginPath();gc.moveTo(CXg-Math.cos(aNeedle)*16,CYg-Math.sin(aNeedle)*16);
- gc.lineTo(CXg+Math.cos(aNeedle)*(Rg-20),CYg+Math.sin(aNeedle)*(Rg-20));gc.stroke();
- gc.fillStyle='#ffb347';gc.beginPath();gc.arc(CXg,CYg,7,0,7);gc.fill();
- gc.restore();
- // hub cover + digital cluster
- gc.fillStyle='#0a0603';gc.beginPath();gc.arc(CXg,CYg+26,64,0,7);gc.fill();
- gc.strokeStyle='#2a1d10';gc.beginPath();gc.arc(CXg,CYg+26,64,0,7);gc.stroke();
- gc.textAlign='center';
- gc.fillStyle='#ffb347';gc.font='46px "Bebas Neue"';
- gc.save();gc.shadowColor='#ff8c1a';gc.shadowBlur=14;
- gc.fillText(d,CXg,CYg+14);gc.restore();
- gc.fillStyle='#9c8a70';gc.font='9px "Space Grotesk"';gc.fillText(label,CXg,CYg+32);
- gc.fillStyle='#e8c47c';gc.font='20px "Bebas Neue"';
- gc.fillText(pad(h)+':'+pad(m)+':'+pad(s),CXg,CYg+56);
- // odo footer
- gc.fillStyle='#7a6a52';gc.font='10px "Space Grotesk"';
- gc.fillText('ODO 1,550 KM · 8 DAYS · 9 STOPS',CXg,CYg+Rg+2);
- requestAnimationFrame(drawGauge);
+  if(now<TEND){diff=TEND-now;st.textContent='BOARDING';lbl.textContent='WE ARE ON THE ROAD RIGHT NOW 🏔️';}
+  else{diff=0;st.textContent='ARRIVED';lbl.textContent='trip done — group chat is now 90% photos 📸';}}
+ setGrp(CD,Math.floor(diff/86400000));
+ setGrp(CH,Math.floor(diff/3600000)%24);
+ setGrp(CM,Math.floor(diff/60000)%60);
+ setGrp(CS,Math.floor(diff/1000)%60);
 }
-requestAnimationFrame(drawGauge);
+tick();setInterval(tick,1000);
+
+/* ---------- rain toggle + lightning ---------- */
+var rainOn=true;
+var OFFLINES=['☂️ scared of water?','😤 it\'s a MONSOON trip, genius','🙄 fine. stay dry. coward.','🥱 battery saver? weak.'];
+var ONLINES=['🌧️ rain: ON','⛈️ monsoon mode restored','🌧️ the rain god approves'];
+function toggleRain(){
+ var f=document.getElementById('flash');
+ f.classList.remove('zap');void f.offsetWidth;f.classList.add('zap');
+ setTimeout(function(){rainOn=!rainOn;
+  document.getElementById('rainT').textContent=
+   rainOn?ONLINES[Math.floor(Math.random()*ONLINES.length)]
+         :OFFLINES[Math.floor(Math.random()*OFFLINES.length)];},260);}
 
 /* ---------- embers + dense warm rain (always on) ---------- */
 var cv=document.getElementById('fx'),cx=cv.getContext('2d');
@@ -462,7 +477,7 @@ for(var j=0;j<190;j++)drops.push({x:Math.random()*innerWidth,y:Math.random()*inn
  l:12+Math.random()*22,v:7+Math.random()*7,o:.10+Math.random()*.22,w:.8+Math.random()*.9});
 function loop(){
  cx.clearRect(0,0,cv.width,cv.height);
- for(var k=0;k<drops.length;k++){var d=drops[k];
+ if(rainOn)for(var k=0;k<drops.length;k++){var d=drops[k];
   cx.strokeStyle='rgba(255,200,140,'+d.o+')';cx.lineWidth=d.w;
   cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-2.5,d.y+d.l);cx.stroke();
   d.y+=d.v;d.x-=.8;
