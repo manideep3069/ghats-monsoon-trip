@@ -69,10 +69,12 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:3.4rem;line-height:.95;margin:1
   padding:9px 14px;font-size:.76rem;font-family:inherit;cursor:pointer;box-shadow:0 6px 20px #000000a0;
   max-width:52vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #rainT:active{transform:scale(.94)}
-#flash{position:fixed;inset:0;z-index:35;pointer-events:none;opacity:0;background:
-  radial-gradient(ellipse 80% 60% at 60% 0%,#fff8e8,#ffd98a44 55%,transparent 78%)}
-#flash.zap{animation:zap .55s ease-out}
-@keyframes zap{0%{opacity:0}8%{opacity:.95}18%{opacity:.12}30%{opacity:.75}45%{opacity:.08}60%{opacity:.4}100%{opacity:0}}
+#flash{position:fixed;inset:0;z-index:35;pointer-events:none;opacity:0;
+  background:linear-gradient(180deg,#fffdf5 0%,#fff3d8 35%,#ffe3ae 70%,#ffd98a 100%)}
+#flash.zap{animation:zap .6s ease-out}
+@keyframes zap{0%{opacity:0}7%{opacity:.98}16%{opacity:.1}28%{opacity:.85}42%{opacity:.06}56%{opacity:.45}100%{opacity:0}}
+#flash.zapsoft{animation:zapsoft .65s ease-out}
+@keyframes zapsoft{0%{opacity:0}10%{opacity:.3}22%{opacity:.04}34%{opacity:.18}100%{opacity:0}}
 
 /* sections */
 .sect{margin-top:40px}
@@ -460,11 +462,17 @@ var OFFLINES=['☂️ scared of water?','😤 it\'s a MONSOON trip, genius','�
 var ONLINES=['🌧️ rain: ON','⛈️ monsoon mode restored','🌧️ the rain god approves'];
 function toggleRain(){
  var f=document.getElementById('flash');
- f.classList.remove('zap');void f.offsetWidth;f.classList.add('zap');
+ f.classList.remove('zap','zapsoft');void f.offsetWidth;f.classList.add('zap');
  setTimeout(function(){rainOn=!rainOn;
   document.getElementById('rainT').textContent=
    rainOn?ONLINES[Math.floor(Math.random()*ONLINES.length)]
          :OFFLINES[Math.floor(Math.random()*OFFLINES.length)];},260);}
+/* ambient storm: whole page flickers now and then */
+function stormFlicker(){
+ var f=document.getElementById('flash');
+ f.classList.remove('zap','zapsoft');void f.offsetWidth;f.classList.add('zapsoft');
+ setTimeout(stormFlicker,15000+Math.random()*30000);}
+setTimeout(stormFlicker,7000);
 
 /* ---------- embers + dense warm rain (always on) ---------- */
 var cv=document.getElementById('fx'),cx=cv.getContext('2d');
