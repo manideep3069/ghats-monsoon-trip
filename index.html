@@ -3,288 +3,418 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Western Ghats Monsoon Loop · Aug 1–8</title>
+<title>Ghats Monsoon Loop · Aug 1–8 · the squad trip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0b1220; --card:#121c2e; --card2:#182642; --ink:#eaf2ff; --dim:#8fa3c4;
-    --teal:#2dd4bf; --amber:#fbbf24; --rose:#fb7185; --green:#4ade80; --violet:#a78bfa;
-    --radius:18px;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;overflow-x:hidden}
-  .wrap{max-width:520px;margin:0 auto;padding:0 14px 80px}
+:root{
+  --bg0:#070b14; --bg1:#0a1220;
+  --glass:rgba(255,255,255,.055); --glass2:rgba(255,255,255,.09);
+  --bord:rgba(255,255,255,.14);
+  --ink:#f2f7ff; --dim:#93a7c9;
+  --mint:#6ef7c4; --sky:#7dd3fc; --peach:#ffb86b; --rose:#ff8fa3; --lav:#c4b5fd;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg0);color:var(--ink);font-family:'Space Grotesk',-apple-system,sans-serif;line-height:1.55;overflow-x:hidden;min-height:100vh}
 
-  /* HERO */
-  .hero{position:relative;padding:46px 18px 30px;text-align:center;background:
-    radial-gradient(ellipse at 20% 0%,#134e4a55,transparent 55%),
-    radial-gradient(ellipse at 90% 10%,#4c1d9555,transparent 50%),
-    linear-gradient(180deg,#0f172a,#0b1220);border-radius:0 0 28px 28px}
-  .hero h1{font-size:1.7rem;letter-spacing:.5px;background:linear-gradient(90deg,var(--teal),var(--violet),var(--amber));
-    -webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 6s linear infinite;background-size:200%}
-  @keyframes shimmer{to{background-position:200%}}
-  .hero .sub{color:var(--dim);margin-top:6px;font-size:.95rem}
-  .badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-  .badge{background:#ffffff12;border:1px solid #ffffff22;border-radius:999px;padding:5px 12px;font-size:.78rem}
-  .ticker{margin-top:18px;overflow:hidden;white-space:nowrap;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
-  .ticker span{display:inline-block;animation:scroll 22s linear infinite;color:var(--teal);font-size:.85rem;letter-spacing:1px}
-  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* ambient aurora */
+.aurora{position:fixed;inset:0;z-index:-2;overflow:hidden;background:linear-gradient(180deg,#070b14,#0a1424 60%,#081018)}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 26s ease-in-out infinite alternate}
+.b1{width:60vw;height:60vw;background:#0d9488;top:-18vw;left:-15vw}
+.b2{width:50vw;height:50vw;background:#4338ca;top:20vh;right:-18vw;animation-delay:-8s}
+.b3{width:45vw;height:45vw;background:#0e7490;bottom:-15vh;left:10vw;animation-delay:-16s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(6vw,-5vh) scale(1.15)}}
+#rain{position:fixed;inset:0;z-index:-1;pointer-events:none}
 
-  h2{font-size:1.05rem;margin:30px 4px 12px;color:var(--amber);letter-spacing:.5px;text-transform:uppercase}
-  .fade{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
-  .fade.in{opacity:1;transform:none}
+.wrap{max-width:540px;margin:0 auto;padding:0 16px 40px}
 
-  /* DAY CARDS */
-  .day{background:var(--card);border:1px solid #ffffff14;border-radius:var(--radius);margin-bottom:12px;overflow:hidden}
-  .day-head{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
-  .day-num{flex-shrink:0;width:46px;height:46px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    font-weight:700;background:linear-gradient(135deg,#134e4a,#1e3a8a);font-size:.72rem;color:#a5f3fc}
-  .day-num b{font-size:1.05rem;color:#fff}
-  .day-title{flex:1}
-  .day-title .t{font-weight:600;font-size:.95rem}
-  .day-title .s{color:var(--dim);font-size:.78rem}
-  .chev{color:var(--dim);transition:transform .3s}
-  .day.open .chev{transform:rotate(180deg)}
-  .day-body{max-height:0;overflow:hidden;transition:max-height .45s ease}
-  .day.open .day-body{max-height:600px}
-  .day-body-inner{padding:0 16px 16px;color:#cdd9ef;font-size:.88rem}
-  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-  .chip{font-size:.72rem;padding:4px 10px;border-radius:999px;border:1px solid #ffffff22;color:var(--dim)}
-  .chip.hot{border-color:var(--teal);color:var(--teal)}
-  .chip.warn{border-color:var(--rose);color:var(--rose)}
+/* hero */
+.hero{padding:58px 10px 26px;text-align:center}
+.kicker{color:var(--mint);letter-spacing:3px;font-size:.72rem;text-transform:uppercase}
+h1{font-size:2rem;line-height:1.15;margin:10px 0 6px}
+h1 span{display:inline-block;animation:floaty 3.2s ease-in-out infinite}
+h1 span:nth-child(2n){animation-delay:.35s} h1 span:nth-child(3n){animation-delay:.7s}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.sub{color:var(--dim);font-size:.95rem}
+.count{display:flex;gap:10px;justify-content:center;margin:22px 0 4px}
+.cbox{background:var(--glass);border:1px solid var(--bord);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-radius:16px;padding:10px 0;width:72px}
+.cbox b{display:block;font-size:1.5rem;color:var(--mint)}
+.cbox small{color:var(--dim);font-size:.66rem;letter-spacing:1px;text-transform:uppercase}
+.hero-btns{display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap}
+.pill{border:1px solid var(--bord);background:var(--glass);backdrop-filter:blur(10px);color:var(--ink);
+  border-radius:999px;padding:10px 18px;font-size:.85rem;font-family:inherit;cursor:pointer;transition:.25s}
+.pill:active{transform:scale(.95)}
+.pill.hot{background:linear-gradient(135deg,#0d9488,#2563eb);border:0}
 
-  /* CALCULATOR */
-  .calc{background:linear-gradient(160deg,var(--card2),var(--card));border:1px solid #ffffff18;border-radius:22px;padding:20px 18px}
-  .seg{display:flex;background:#0b1220;border-radius:12px;padding:4px;margin-bottom:18px}
-  .seg button{flex:1;padding:10px;border:0;border-radius:9px;background:transparent;color:var(--dim);font-weight:700;font-size:.9rem;transition:.25s}
-  .seg button.on{background:linear-gradient(135deg,#0d9488,#2563eb);color:#fff}
-  .ctl{margin-bottom:16px}
-  .ctl label{display:flex;justify-content:space-between;font-size:.85rem;color:var(--dim);margin-bottom:6px}
-  .ctl label b{color:var(--ink)}
-  input[type=range]{width:100%;accent-color:var(--teal);height:26px}
-  .toggle-row{display:flex;justify-content:space-between;align-items:center;background:#0b122066;border-radius:12px;padding:12px 14px;margin-bottom:16px}
-  .toggle-row .tl{font-size:.9rem}
-  .toggle-row .tl small{display:block;color:var(--dim);font-size:.74rem}
-  .switch{position:relative;width:52px;height:30px;flex-shrink:0}
-  .switch input{opacity:0;width:0;height:0}
-  .slider-ui{position:absolute;inset:0;background:#334155;border-radius:999px;transition:.3s;cursor:pointer}
-  .slider-ui:before{content:"";position:absolute;width:24px;height:24px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.3s}
-  .switch input:checked + .slider-ui{background:var(--teal)}
-  .switch input:checked + .slider-ui:before{transform:translateX(22px)}
-  .result{margin-top:6px;text-align:center;background:#0b122088;border-radius:16px;padding:18px}
-  .result .per{font-size:2.3rem;font-weight:800;color:var(--green)}
-  .result .tot{color:var(--dim);font-size:.9rem;margin-top:2px}
-  .result .cap{margin-top:8px;font-size:.8rem}
-  .cap.ok{color:var(--green)} .cap.no{color:var(--rose)}
-  .bars{margin-top:16px}
-  .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:.76rem}
-  .bar-row .nm{width:64px;color:var(--dim);text-align:right}
-  .bar-track{flex:1;height:12px;background:#0b1220;border-radius:99px;overflow:hidden}
-  .bar-fill{height:100%;border-radius:99px;transition:width .5s ease}
-  .bar-row .val{width:52px;color:var(--ink)}
+/* curtain-reveal sections */
+.sect{margin-top:34px}
+.curtain{clip-path:inset(0 100% 0 0 round 24px);transition:clip-path 1s cubic-bezier(.7,0,.2,1)}
+.curtain.in{clip-path:inset(0 0 0 0 round 24px)}
+h2{font-size:1rem;margin:0 6px 12px;color:var(--peach);letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+h2:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--bord),transparent)}
+.note{color:var(--dim);font-size:.82rem;margin:0 6px 14px}
 
-  /* ROUTE */
-  .route{background:var(--card);border:1px solid #ffffff14;border-radius:var(--radius);padding:16px}
-  .leg{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:.84rem}
-  .dotc{width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;box-shadow:0 0 8px var(--teal)}
-  .leg .nm{flex:1}
-  .leg .dt{color:var(--dim);font-size:.76rem}
-  .vline{width:2px;height:14px;background:#ffffff22;margin-left:4px}
+/* glass card */
+.glass{background:var(--glass);border:1px solid var(--bord);border-radius:24px;
+  backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+  padding:20px 18px;box-shadow:0 12px 40px #00000055}
 
-  /* WARNINGS + CHECKLIST */
-  .warn-card{background:#2a151f;border:1px solid #fb718533;border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;font-size:.85rem}
-  .warn-card b{color:var(--rose)}
-  .check{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid #ffffff14;border-radius:14px;padding:13px 14px;margin-bottom:9px;font-size:.86rem;cursor:pointer}
-  .check input{margin-top:3px;accent-color:var(--green);width:18px;height:18px;flex-shrink:0}
-  .check.done{opacity:.45;text-decoration:line-through}
-  .foot{text-align:center;color:var(--dim);font-size:.75rem;margin-top:36px}
+/* calculator */
+.ctl{margin-bottom:18px}
+.ctl label{display:flex;justify-content:space-between;font-size:.86rem;color:var(--dim);margin-bottom:6px}
+.ctl label b{color:var(--ink)}
+.ctl .why{font-size:.72rem;color:#6b7fa3;margin-top:3px}
+input[type=range]{width:100%;accent-color:var(--mint);height:28px}
+.carseg{display:flex;gap:8px;margin-bottom:6px}
+.carseg button{flex:1;padding:12px;border-radius:14px;border:1px solid var(--bord);background:var(--glass);
+  color:var(--dim);font-family:inherit;font-size:.84rem;cursor:pointer;transition:.25s}
+.carseg button.on{background:linear-gradient(135deg,#0d9488cc,#2563ebcc);color:#fff;border-color:transparent}
+.carseg button:disabled{opacity:.35;cursor:not-allowed}
+.carnote{font-size:.74rem;color:var(--peach);margin-bottom:14px;min-height:1em}
+.tog{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.25);border-radius:16px;padding:13px 15px;margin-bottom:18px}
+.tog .tl{font-size:.9rem}.tog .tl small{display:block;color:var(--dim);font-size:.73rem}
+.sw{position:relative;width:52px;height:30px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.sw i{position:absolute;inset:0;background:#33415588;border-radius:99px;transition:.3s;cursor:pointer;font-style:normal}
+.sw i:before{content:"";position:absolute;width:24px;height:24px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.3s}
+.sw input:checked + i{background:var(--mint)}
+.sw input:checked + i:before{transform:translateX(22px)}
+.big{margin-top:4px;text-align:center;background:rgba(0,0,0,.3);border-radius:20px;padding:20px;position:relative;overflow:hidden}
+.big:before{content:"";position:absolute;inset:-50%;background:conic-gradient(from 0deg,transparent,#6ef7c422,transparent 30%);animation:spin 5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.big>*{position:relative}
+.per{font-size:2.6rem;font-weight:700;color:var(--mint)}
+.tot{color:var(--dim);font-size:.9rem}
+.capline{margin-top:8px;font-size:.82rem}
+.capline.ok{color:var(--mint)} .capline.no{color:var(--rose)}
+.bars{margin-top:18px}
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:.76rem}
+.brow .nm{width:58px;color:var(--dim);text-align:right}
+.btrack{flex:1;height:12px;background:rgba(0,0,0,.35);border-radius:99px;overflow:hidden}
+.bfill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.6,0,.2,1)}
+.brow .vl{width:56px}
+
+/* days */
+.day{background:var(--glass);border:1px solid var(--bord);border-radius:20px;margin-bottom:12px;overflow:hidden;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:border-color .3s}
+.day.today{border-color:var(--mint);box-shadow:0 0 24px #6ef7c433}
+.dh{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;user-select:none}
+.dn{flex-shrink:0;width:48px;height:48px;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-weight:700;background:linear-gradient(135deg,#134e4a,#312e81);font-size:.95rem}
+.dn small{font-size:.6rem;color:var(--sky);font-weight:400}
+.dt{flex:1}.dt .t{font-weight:600;font-size:.94rem}.dt .s{color:var(--dim);font-size:.77rem}
+.chev{color:var(--dim);transition:transform .35s}
+.day.open .chev{transform:rotate(180deg)}
+.db{max-height:0;overflow:hidden;transition:max-height .5s ease}
+.day.open .db{max-height:700px}
+.dbi{padding:0 16px 16px;color:#c9d7ef;font-size:.87rem}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:.71rem;padding:4px 11px;border-radius:999px;border:1px solid var(--bord);color:var(--dim)}
+.chip.hot{border-color:var(--mint);color:var(--mint)}
+.chip.warn{border-color:var(--rose);color:var(--rose)}
+
+/* route */
+.leg{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:.84rem}
+.dotc{width:10px;height:10px;border-radius:50%;background:var(--sky);flex-shrink:0;box-shadow:0 0 10px var(--sky)}
+.leg .nm{flex:1}.leg .dst{color:var(--dim);font-size:.76rem}
+.vline{width:2px;height:12px;background:var(--bord);margin-left:4px}
+
+/* rules */
+.rule{background:rgba(255,80,110,.07);border:1px solid #ff8fa333;border-radius:18px;padding:14px 16px;margin-bottom:10px;font-size:.85rem;
+  backdrop-filter:blur(10px)}
+.rule b{color:var(--rose)}
+
+/* checklist */
+.prog{height:10px;background:rgba(0,0,0,.35);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--sky));border-radius:99px;transition:width .5s;width:0}
+.check{display:flex;gap:12px;align-items:flex-start;background:var(--glass);border:1px solid var(--bord);border-radius:16px;
+  padding:13px 14px;margin-bottom:9px;font-size:.85rem;cursor:pointer;backdrop-filter:blur(10px);transition:.3s}
+.check input{margin-top:3px;accent-color:var(--mint);width:18px;height:18px;flex-shrink:0}
+.check.done{opacity:.4;text-decoration:line-through}
+
+.foot{text-align:center;color:var(--dim);font-size:.8rem;margin-top:44px;padding-bottom:20px}
+.foot .love{margin-top:10px;font-size:.9rem;color:var(--ink)}
+.foot .love b{background:linear-gradient(90deg,var(--mint),var(--sky),var(--lav));-webkit-background-clip:text;background-clip:text;color:transparent}
 </style>
 </head>
 <body>
-
-<div class="hero">
-  <h1>WESTERN GHATS MONSOON LOOP</h1>
-  <div class="sub">Aug 1 – Aug 8, 2026 · 8 days · 7 nights · self-drive</div>
-  <div class="badges">
-    <span class="badge">🚗 ~1,550 km</span>
-    <span class="badge">🌧️ Monsoon special</span>
-    <span class="badge">🛶 Rafting</span>
-    <span class="badge">⛰️ 9 destinations</span>
-  </div>
-  <div class="ticker"><span>BENGALURU → OOTY → WAYANAD → COORG → SAKLESHPUR → CHIKMAGALUR → KUDREMUKH → AGUMBE → UDUPI → BENGALURU &nbsp;·&nbsp; BENGALURU → OOTY → WAYANAD → COORG → SAKLESHPUR → CHIKMAGALUR → KUDREMUKH → AGUMBE → UDUPI → BENGALURU &nbsp;·&nbsp; </span></div>
-</div>
+<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<canvas id="rain"></canvas>
 
 <div class="wrap">
-
-  <h2 class="fade">💰 Budget — play with it</h2>
-  <div class="calc fade">
-    <div class="seg">
-      <button id="g9" class="on" onclick="setGroup(9)">👥 9 people · 2 cars</button>
-      <button id="g6" onclick="setGroup(6)">👥 6 people · Carens</button>
+  <div class="hero">
+    <div class="kicker">the squad · monsoon edition</div>
+    <h1 id="title">GHATS MONSOON LOOP</h1>
+    <div class="sub">Aug 1 → Aug 8 · 9 spots · ~1,550 km · zero boring days</div>
+    <div class="count" id="count">
+      <div class="cbox"><b id="cd">0</b><small>days</small></div>
+      <div class="cbox"><b id="ch">0</b><small>hrs</small></div>
+      <div class="cbox"><b id="cm">0</b><small>min</small></div>
+      <div class="cbox"><b id="cs">0</b><small>sec</small></div>
     </div>
-    <div class="ctl">
-      <label>2BHK per night <b id="roomV">₹2,000</b></label>
-      <input type="range" id="room" min="1500" max="4500" step="100" value="2000" oninput="calc()">
+    <div class="sub" id="countLabel">until the 12:45 AM roll-out 🚗</div>
+    <div class="hero-btns">
+      <button class="pill hot" onclick="shareIt()">📤 send to the group</button>
+      <button class="pill" id="rainBtn" onclick="toggleRain()">🌧️ rain: on</button>
     </div>
-    <div class="ctl">
-      <label>Food per person/day <b id="foodV">₹550</b></label>
-      <input type="range" id="food" min="350" max="900" step="50" value="550" oninput="calc()">
-    </div>
-    <div class="ctl">
-      <label>Petrol price /litre <b id="fuelV">₹111</b></label>
-      <input type="range" id="fuel" min="95" max="130" step="1" value="111" oninput="calc()">
-    </div>
-    <div class="toggle-row">
-      <div class="tl">🛶 Barapole Rafting<small>Class III–IV · monsoon only · ₹1,500/head</small></div>
-      <label class="switch"><input type="checkbox" id="raft" checked onchange="calc()"><span class="slider-ui"></span></label>
-    </div>
-    <div class="result">
-      <div class="per" id="perHead">₹0</div>
-      <div class="tot">per person · total <b id="total">₹0</b></div>
-      <div class="cap" id="capMsg"></div>
-    </div>
-    <div class="bars" id="bars"></div>
   </div>
 
-  <h2 class="fade">📅 The 8 Days — tap to expand</h2>
-  <div id="days"></div>
+  <div class="sect">
+    <h2>💸 the money math</h2>
+    <div class="note">drag things. argue with friends. the math updates itself — no excel needed.</div>
+    <div class="glass curtain">
+      <div class="ctl">
+        <label>how many of us? <b id="pplV">9</b></label>
+        <input type="range" id="ppl" min="6" max="9" step="1" value="9" oninput="calc()">
+        <div class="why">min 6, max 9 — below 6 the per-head cost gets ugly, above 9 we need a bus 🚌</div>
+      </div>
+      <div class="ctl">
+        <label>cars</label>
+        <div class="carseg">
+          <button id="c1" onclick="setCars(1)">🚗 1 car (7-seater)</button>
+          <button id="c2" onclick="setCars(2)">🚗🚗 2 cars (5-seaters)</button>
+        </div>
+        <div class="carnote" id="carNote"></div>
+      </div>
+      <div class="ctl">
+        <label>2BHK per night <b id="roomV">₹2,000</b></label>
+        <input type="range" id="room" min="1500" max="4500" step="100" value="2000" oninput="calc()">
+        <div class="why">the friend-tested rate. weekend nights (Ooty, Udupi) might push higher — book those first</div>
+      </div>
+      <div class="ctl">
+        <label>food per head/day <b id="foodV">₹550</b></label>
+        <input type="range" id="food" min="350" max="900" step="50" value="550" oninput="calc()">
+        <div class="why">₹550 = homestay meals + one nice café a day. ₹900 = you're ordering paneer everywhere</div>
+      </div>
+      <div class="ctl">
+        <label>petrol ₹/litre <b id="fuelV">₹111</b></label>
+        <input type="range" id="fuel" min="95" max="130" step="1" value="111" oninput="calc()">
+        <div class="why">Bengaluru is ~₹111 right now. tank up in Karnataka — Kerala/TN charge more</div>
+      </div>
+      <div class="ctl">
+        <label>mileage km/l <b id="milV">14</b></label>
+        <input type="range" id="mil" min="10" max="20" step="1" value="14" oninput="calc()">
+        <div class="why">highway ~15-16, ghats with AC ~11-12. 14 is the honest average</div>
+      </div>
+      <div class="tog">
+        <div class="tl">🛶 Barapole rafting <small>Class III–IV rapids · only exists in monsoon · ₹1,500/head</small></div>
+        <label class="sw"><input type="checkbox" id="raft" checked onchange="calc()"><i></i></label>
+      </div>
+      <div class="big">
+        <div class="per" id="perHead">₹0</div>
+        <div class="tot">per person · squad total <b id="total">₹0</b></div>
+        <div class="capline" id="capMsg"></div>
+      </div>
+      <div class="bars" id="bars"></div>
+    </div>
+  </div>
 
-  <h2 class="fade">🗺️ Route legs (Google-Maps verified)</h2>
-  <div class="route fade" id="route"></div>
+  <div class="sect">
+    <h2>📅 eight days, zero fluff</h2>
+    <div class="note">tap a day to see what's cooking. if we're mid-trip, today glows ✨</div>
+    <div id="days"></div>
+  </div>
 
-  <h2 class="fade">⚠️ Non-negotiables</h2>
-  <div class="warn-card fade"><b>12:45 AM sharp.</b> Bandipur forest gate is shut 9 PM–6 AM. Leave on time → gate at 5:45 AM. Two fresh drivers per car.</div>
-  <div class="warn-card fade"><b>No ghat driving after dark.</b> Monsoon + hairpins + night = the only real danger on this trip.</div>
-  <div class="warn-card fade"><b>Check Google Maps every morning.</b> NH75/NH275 had live monsoon closures during planning. Reroutes happen.</div>
-  <div class="warn-card fade"><b>No swimming.</b> Sea and waterfalls are in full monsoon flow. Watch, don't wade.</div>
+  <div class="sect">
+    <h2>🗺️ the route</h2>
+    <div class="note">every leg checked on live Google Maps — not guessed, checked.</div>
+    <div class="glass curtain" id="route"></div>
+  </div>
 
-  <h2 class="fade">✅ Booking checklist</h2>
-  <div id="checks"></div>
+  <div class="sect">
+    <h2>🚫 rules we don't break</h2>
+    <div class="rule curtain"><b>12:45 AM means 12:45 AM.</b> the Bandipur forest gate is shut 9 PM–6 AM. leave on time → we cross at 6 sharp → Ooty by breakfast. leave late → we sit at a gate watching trucks.</div>
+    <div class="rule curtain"><b>no ghat driving after dark.</b> monsoon + hairpins + night is the one genuinely dangerous combo on this trip. everything else is vibes.</div>
+    <div class="rule curtain"><b>check Google Maps every morning.</b> monsoon closes roads randomly. 2 min of checking saves 2 hrs of rerouting.</div>
+    <div class="rule curtain"><b>no swimming. anywhere.</b> the sea is angry and the waterfalls are angrier. we look, we click pics, we live.</div>
+  </div>
 
-  <div class="foot">Built with ❤️ for the squad · prices are estimates — recheck when booking<br>Trek note: KP / Kudremukh peak / Netravati are forest-closed in August → rafting is the adventure centerpiece</div>
+  <div class="sect">
+    <h2>✅ get-ready checklist</h2>
+    <div class="note">ticks save on your phone — everyone tracks their own.</div>
+    <div class="prog"><i id="progFill"></i></div>
+    <div id="checks"></div>
+  </div>
+
+  <div class="foot">
+    numbers are estimates — recheck while booking · treks (KP/Kudremukh peak) are forest-closed in Aug, that's why rafting is the main event
+    <div class="love">made with ❤️ by <b>mandy</b> (you know who 😉)</div>
+  </div>
 </div>
 
 <script>
+/* ---------- data ---------- */
 const DAYS=[
- {d:"D1",dt:"Sat · Aug 1",icon:"🌄",t:"Bengaluru → Ooty",s:"Gate 6 AM · Ooty 8:30 AM",
-  body:"12:45 AM roll-out → Bandipur gate at 5:45 → cross at 6 → Ooty by 8:30. Nap till noon (mandatory 😴), then Botanical Garden, Ooty Lake, Doddabetta if the clouds allow.",
-  chips:["245+48 km","~7 h","🛏️ Ooty","chip warn|Kalhatty ghat: if raining hard, take Gudalur route +1h"]},
- {d:"D2",dt:"Sun · Aug 2",icon:"🕳️",t:"Ooty → Wayanad",s:"Pykara · Edakkal caves · Karapuzha",
-  body:"Pykara falls & lake on the way down. Reach Kalpetta ~1 PM. Edakkal caves climb MUST happen today (closed Mondays). Karapuzha dam for the evening.",
-  chips:["117 km","~3.5 h","🛏️ Kalpetta"]},
- {d:"D3",dt:"Mon · Aug 3",icon:"🛶",t:"Wayanad → RAFTING → Coorg",s:"The big one — Barapole 2 PM",
-  body:"Soochipara falls in the morning, then the trip's centerpiece: Barapole white-water rafting, 2 PM batch. Class III–IV monsoon rapids — this only exists June–Oct. Madikeri by 6:30 PM.",
-  chips:["142 km","~3.5 h drive","chip hot|Rafting ₹1.2–2k","🛏️ Madikeri"]},
- {d:"D4",dt:"Tue · Aug 4",icon:"🚙",t:"Coorg → Sakleshpur",s:"Mandalpatti sunrise · Abbey Falls · Dubare",
-  body:"Mandalpatti sunrise jeep ride through the mist (~₹450). Abbey Falls at full roar, Dubare elephant camp after. 3:30 PM drive to a Sakleshpur estate homestay — coffee, rain, campfire if dry.",
-  chips:["100 km","~2.5 h","chip hot|Jeep ₹450","🛏️ Sakleshpur"]},
- {d:"D5",dt:"Wed · Aug 5",icon:"🏰",t:"Sakleshpur → Chikmagalur",s:"Star fort · waterfalls · coffee town",
-  body:"Manjarabad star fort (yes, it's star-shaped from above), Mookanamane falls, estate walk. Short 1.5 h hop to Chikmagalur — coffee museum and café-hopping evening.",
-  chips:["62 km","~1.5 h","🛏️ Chikmagalur"]},
- {d:"D6",dt:"Thu · Aug 6",icon:"⛰️",t:"Chikmagalur → Kalasa",s:"Mullayanagiri · Jhari jeep",
-  body:"Early start for Mullayanagiri — Karnataka's highest peak (best fog window is morning). Jhari falls by shared jeep (~₹450). 2 PM scenic drive to Kalasa through coffee country.",
-  chips:["106 km","~3 h","chip hot|Jeep ₹450","🛏️ Kalasa"]},
- {d:"D7",dt:"Fri · Aug 7",icon:"🌊",t:"Kudremukh → Agumbe → Udupi",s:"The most scenic day",
-  body:"Hanumangundi falls, Lakya dam, the gorgeous Kudremukh NP ghat drive. Agumbe: Jogigundi falls, Doddamane (Malgudi Days house), sunset point. Descend the 14-hairpin Agumbe ghat BEFORE dark → Malpe beach sunset in Udupi.",
-  chips:["131 km","~3.5 h","chip warn|Descend ghat before dark","🛏️ Udupi"]},
- {d:"D8",dt:"Sat · Aug 8",icon:"🏠",t:"Udupi → Home",s:"Temple · dosa · highway",
-  body:"Krishna temple + a proper Udupi breakfast (this is the birthplace of the dosa — respect it). Depart 10 AM SHARP → Bengaluru ~6 PM. Trip complete. 🎉",
-  chips:["399 km","~7.5 h","chip warn|Leave by 10 AM to hit 6 PM"]}
+ {d:1,w:"SAT",icon:"🌄",t:"Bengaluru → Ooty",s:"the midnight run",
+  body:"12:45 AM sharp. plains highway all night, forest gate at 6, Ooty by 8:30. nap till noon — non-negotiable, zombies don't enjoy gardens. then Botanical Garden, lake, Doddabetta if clouds behave. why the weird timing? the forest closes at night and we're beating the system legally 😎",
+  chips:["245+48 km · ~7h","🛏️ Ooty","warn|rain heavy? skip Kalhatty hairpins, take Gudalur +1h"]},
+ {d:2,w:"SUN",icon:"🕳️",t:"Ooty → Wayanad",s:"caves day",
+  body:"roll down via Pykara falls. Kalpetta by 1. Edakkal caves is a proper little climb to 8,000-year-old rock art — and it's closed on Mondays, which is exactly why it's today. Karapuzha dam for a chill evening.",
+  chips:["117 km · ~3.5h","🛏️ Kalpetta"]},
+ {d:3,w:"MON",icon:"🛶",t:"Wayanad → RAFTING → Coorg",s:"THE day",
+  body:"Soochipara falls in the morning, then the main event: Barapole white-water rafting at 2 PM. class III–IV rapids that literally only exist June–Oct. this is why we came in monsoon instead of december like normal people. Madikeri by 6:30, biryani, sleep.",
+  chips:["142 km · ~3.5h","hot|rafting ₹1.2–2k","🛏️ Madikeri"]},
+ {d:4,w:"TUE",icon:"🚙",t:"Coorg → Sakleshpur",s:"jeeps & elephants",
+  body:"Mandalpatti sunrise jeep — open-top 4x4 through mist, ~₹450, worth every rupee even if we see 40% mountain 60% cloud. Abbey Falls at full roar, elephants at Dubare, then an easy evening drive to a coffee-estate homestay in Sakleshpur. campfire if the rain allows.",
+  chips:["100 km · ~2.5h","hot|jeep ₹450","🛏️ Sakleshpur estate"]},
+ {d:5,w:"WED",icon:"🏰",t:"Sakleshpur → Chikmagalur",s:"the chill day",
+  body:"Manjarabad fort — an actual star-shaped fort, looks unreal from the air. Mookanamane falls, estate walk, then a lazy 1.5h hop to Chikmagalur. evening = coffee museum + café hopping in India's coffee capital. recovery day, by design.",
+  chips:["62 km · ~1.5h","🛏️ Chikmagalur"]},
+ {d:6,w:"THU",icon:"⛰️",t:"Chikmagalur → Kalasa",s:"the summit",
+  body:"early alarm for Mullayanagiri — Karnataka's highest peak, and the only real summit that's legally open in August (every forest trek is closed till Oct, we checked). morning = best shot at a view. Jhari falls by shared jeep after, then a gorgeous 3h drive into Kalasa.",
+  chips:["106 km · ~3h","hot|jeep ₹450","🛏️ Kalasa"]},
+ {d:7,w:"FRI",icon:"🌊",t:"Kudremukh → Agumbe → Udupi",s:"the scenic monster",
+  body:"Hanumangundi falls, Lakya dam, and the Kudremukh national park ghat drive — arguably the prettiest road in Karnataka. Agumbe next: Jogigundi falls, Doddamane (the actual Malgudi Days house). then down the famous 14-hairpin Agumbe ghat BEFORE dark, and Malpe beach sunset in Udupi. big day, huge payoff.",
+  chips:["131 km · ~3.5h","warn|descend the ghat before dark, no debates","🛏️ Udupi"]},
+ {d:8,w:"SAT",icon:"🏠",t:"Udupi → home",s:"dosa & highway",
+  body:"Krishna temple darshan + a proper Udupi breakfast — we're in the birthplace of the dosa, act accordingly. wheels rolling at 10 AM sharp and we're home by 6. shower, sleep, flex the pics on Monday.",
+  chips:["399 km · ~7.5h","warn|leave by 10 or reach by 9"]}
 ];
-const LEGS=[
- ["Bengaluru → Bandipur gate","245 km · 5 h"],["Gate → Ooty","48 km · 2 h"],
- ["Ooty → Kalpetta","117 km · 3½ h"],["Kalpetta → Rafting → Madikeri","142 km · 3½ h"],
- ["Madikeri → Sakleshpur","100 km · 2½ h"],["Sakleshpur → Chikmagalur","62 km · 1½ h"],
- ["Chikmagalur → Kalasa","106 km · 3 h"],["Kalasa → Agumbe","78 km · 2 h"],
- ["Agumbe → Udupi","53 km · 1 h"],["Udupi → Bengaluru","399 km · 7¾ h"]
-];
-const CHECKS=[
- "Cars booked (unlimited km) — pickup Fri Jul 31 evening",
- "Ooty 2BHK (Sat Aug 1) — book FIRST, weekend rate. Ask about dampness!",
- "Udupi 2BHK (Fri Aug 7) — book FIRST, Friday rate",
- "Kalpetta · Madikeri · Sakleshpur · Chikmagalur · Kalasa 2BHKs (₹2k direct-phone)",
- "Barapole rafting — Mon Aug 3, 2 PM batch (reconfirm Sunday night)",
- "Roof box / luggage plan sorted (9-people config)",
- "Rain gear, leech socks + salt, power banks, offline maps, ₹2k cash per car",
- "Two drivers per car slept properly on Friday"
-];
+const LEGS=[["Bengaluru → Bandipur gate","245 km · 5h"],["gate → Ooty","48 km · 2h"],
+ ["Ooty → Kalpetta","117 km · 3½h"],["Kalpetta → rafting → Madikeri","142 km · 3½h"],
+ ["Madikeri → Sakleshpur","100 km · 2½h"],["Sakleshpur → Chikmagalur","62 km · 1½h"],
+ ["Chikmagalur → Kalasa","106 km · 3h"],["Kalasa → Agumbe","78 km · 2h"],
+ ["Agumbe → Udupi","53 km · 1h"],["Udupi → Bengaluru","399 km · 7¾h"]];
+const CHECKS=["cars booked · unlimited km · pickup Fri Jul 31 evening","Ooty 2BHK (Aug 1) — book FIRST, ask about dampness",
+ "Udupi 2BHK (Aug 7) — book FIRST","Kalpetta · Madikeri · Sakleshpur · Chikmagalur · Kalasa 2BHKs",
+ "rafting slot — Mon Aug 3, 2 PM batch (reconfirm Sun night)","roof box / luggage tetris plan",
+ "rain jackets + leech socks + salt (yes, salt)","power banks + offline maps + ₹2k cash per car","both drivers per car actually slept on Friday"];
 
-// render days
-document.getElementById('days').innerHTML = DAYS.map((x,i)=>`
- <div class="day fade" id="day${i}">
-  <div class="day-head" onclick="tog(${i})">
-   <div class="day-num"><b>${x.d}</b>${x.icon}</div>
-   <div class="day-title"><div class="t">${x.t}</div><div class="s">${x.dt} · ${x.s}</div></div>
+/* ---------- render days ---------- */
+const trip0=new Date('2026-08-01T00:00:00+05:30');
+const todayIdx=Math.floor((Date.now()-trip0)/86400000);
+document.getElementById('days').innerHTML=DAYS.map((x,i)=>`
+ <div class="day curtain ${i===todayIdx?'today':''}" id="day${i}">
+  <div class="dh" onclick="tog(${i})">
+   <div class="dn">${x.icon}<small>D${x.d}·${x.w}</small></div>
+   <div class="dt"><div class="t">${x.t}</div><div class="s">${x.s}${i===todayIdx?' · 🔴 TODAY':''}</div></div>
    <div class="chev">▼</div>
   </div>
-  <div class="day-body"><div class="day-body-inner">${x.body}
-   <div class="chips">${x.chips.map(c=>{
-     if(c.startsWith('chip warn|'))return `<span class="chip warn">⚠️ ${c.split('|')[1]}</span>`;
-     if(c.startsWith('chip hot|'))return `<span class="chip hot">${c.split('|')[1]}</span>`;
-     return `<span class="chip">${c}</span>`;}).join('')}
-  </div></div></div>
+  <div class="db"><div class="dbi">${x.body}<div class="chips">${x.chips.map(c=>{
+    if(c.startsWith('warn|'))return `<span class="chip warn">⚠️ ${c.slice(5)}</span>`;
+    if(c.startsWith('hot|'))return `<span class="chip hot">${c.slice(4)}</span>`;
+    return `<span class="chip">${c}</span>`;}).join('')}</div></div></div>
  </div>`).join('');
 function tog(i){document.getElementById('day'+i).classList.toggle('open')}
+tog(todayIdx>=0&&todayIdx<8?todayIdx:0);
 
-// route
-document.getElementById('route').innerHTML = LEGS.map((l,i)=>
- `<div class="leg"><div class="dotc"></div><div class="nm">${l[0]}</div><div class="dt">${l[1]}</div></div>${i<LEGS.length-1?'<div class="vline"></div>':''}`).join('');
+/* ---------- route ---------- */
+document.getElementById('route').innerHTML=LEGS.map((l,i)=>
+ `<div class="leg"><div class="dotc"></div><div class="nm">${l[0]}</div><div class="dst">${l[1]}</div></div>${i<LEGS.length-1?'<div class="vline"></div>':''}`).join('');
 
-// checklist
-document.getElementById('checks').innerHTML = CHECKS.map((c,i)=>
- `<label class="check fade" id="ck${i}"><input type="checkbox" onchange="ck(${i},this)"><span>${c}</span></label>`).join('');
-function ck(i,el){document.getElementById('ck'+i).classList.toggle('done',el.checked);try{localStorage.setItem('ck'+i,el.checked?'1':'0')}catch(e){}}
-try{CHECKS.forEach((c,i)=>{if(localStorage.getItem('ck'+i)==='1'){const l=document.getElementById('ck'+i);l.querySelector('input').checked=true;l.classList.add('done')}})}catch(e){}
+/* ---------- checklist ---------- */
+document.getElementById('checks').innerHTML=CHECKS.map((c,i)=>
+ `<label class="check curtain" id="ck${i}"><input type="checkbox" onchange="ck(${i},this)"><span>${c}</span></label>`).join('');
+function ck(i,el){document.getElementById('ck'+i).classList.toggle('done',el.checked);
+ try{localStorage.setItem('ck'+i,el.checked?'1':'0')}catch(e){} prog();}
+function prog(){let n=0;CHECKS.forEach((c,i)=>{try{if(localStorage.getItem('ck'+i)==='1')n++}catch(e){}});
+ document.getElementById('progFill').style.width=(n/CHECKS.length*100)+'%';}
+try{CHECKS.forEach((c,i)=>{if(localStorage.getItem('ck'+i)==='1'){const l=document.getElementById('ck'+i);
+ l.querySelector('input').checked=true;l.classList.add('done')}})}catch(e){}
+prog();
 
-// calculator
-let group=9;
-function setGroup(g){group=g;
- document.getElementById('g9').classList.toggle('on',g===9);
- document.getElementById('g6').classList.toggle('on',g===6);calc();}
+/* ---------- calculator ---------- */
+let cars=2,carManual=false;
+function setCars(n){cars=n;carManual=true;calc();}
 const fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
 let animRef=null;
 function calc(){
+ const ppl=+document.getElementById('ppl').value;
  const room=+document.getElementById('room').value;
  const food=+document.getElementById('food').value;
  const fuelP=+document.getElementById('fuel').value;
+ const mil=+document.getElementById('mil').value;
  const raft=document.getElementById('raft').checked;
+ const c1=document.getElementById('c1'),c2=document.getElementById('c2');
+ if(ppl>7){cars=2;c1.disabled=true;}
+ else{c1.disabled=false;if(!carManual)cars=(ppl<=6?1:2);}
+ c1.classList.toggle('on',cars===1);c2.classList.toggle('on',cars===2);
+ document.getElementById('carNote').textContent=
+   ppl>7?`${ppl} people + a week of luggage won't fit in one car — 2 cars, no debate`:
+   (cars===1&&ppl===7?'7 in a 7-seater works but luggage rides on laps — think about it':
+   (cars===1?'one 7-seater = the cheapest way to roll':'two cars = space, comfort + a backup if one acts up'));
+ document.getElementById('pplV').textContent=ppl;
  document.getElementById('roomV').textContent=fmt(room);
  document.getElementById('foodV').textContent=fmt(food);
  document.getElementById('fuelV').textContent='₹'+fuelP;
+ document.getElementById('milV').textContent=mil;
  const km=1560,days=8,nights=7;
- let rental,fuel,tolls,units,actPer;
- if(group===9){rental=2*2300*days;fuel=2*(km/15)*fuelP;tolls=2500;units=2;actPer=1250;}
- else{rental=3200*days;fuel=(km/14)*fuelP;tolls=1500;units=1;actPer=1250;}
+ const rental=cars===1?3200*days:2*2300*days;
+ const fuel=cars*(km/mil)*fuelP;
+ const tolls=1250*cars;
+ const units=ppl<=6?1:2;
  const stay=nights*units*room;
- const foodT=group*days*food;
- const act=group*actPer;
- const raftT=raft?group*1500:0;
+ const foodT=ppl*days*food;
+ const act=ppl*1250;
+ const raftT=raft?ppl*1500:0;
  const total=rental+fuel+tolls+stay+foodT+act+raftT;
- const per=total/group;
+ const per=total/ppl;
  document.getElementById('total').textContent=fmt(total);
- // animate per-head
  const el=document.getElementById('perHead');
- const start=parseInt((el.dataset.v||'0'),10),end=Math.round(per),t0=performance.now();
+ const start=+(el.dataset.v||0),end=Math.round(per),t0=performance.now();
  cancelAnimationFrame(animRef);
- (function step(t){const p=Math.min((t-t0)/400,1);
-   el.textContent=fmt(start+(end-start)*p);
-   if(p<1)animRef=requestAnimationFrame(step);else el.dataset.v=end;})(t0);
- const cap=group===9?150000:100000;
- const capEl=document.getElementById('capMsg');
- if(total<=cap){capEl.textContent='✅ Under the '+fmt(cap)+' target — book it!';capEl.className='cap ok';}
- else{capEl.textContent='⚠️ '+fmt(total-cap)+' over the '+fmt(cap)+' target';capEl.className='cap no';}
- // bars
- const items=[["Cars",rental,"#2dd4bf"],["Fuel",fuel+tolls,"#60a5fa"],["Stay",stay,"#a78bfa"],["Food",foodT,"#fbbf24"],["Fun",act+raftT,"#fb7185"]];
+ (function step(t){const p=Math.min((t-t0)/450,1);
+  el.textContent=fmt(start+(end-start)*p);
+  if(p<1)animRef=requestAnimationFrame(step);else el.dataset.v=end;})(t0);
+ const cap=ppl*16700;
+ const cm3=document.getElementById('capMsg');
+ if(total<=cap){cm3.textContent='✅ inside the ~₹16.7k/head sweet spot — send it';cm3.className='capline ok';}
+ else{cm3.textContent='😬 '+fmt((total-cap)/ppl)+'/head over the sweet spot — drag something down or accept your fate';cm3.className='capline no';}
+ const items=[["cars",rental,"#6ef7c4"],["fuel",fuel+tolls,"#7dd3fc"],["stay",stay,"#c4b5fd"],["food",foodT,"#ffb86b"],["fun",act+raftT,"#ff8fa3"]];
  const mx=Math.max(...items.map(i=>i[1]));
  document.getElementById('bars').innerHTML=items.map(i=>
-  `<div class="bar-row"><div class="nm">${i[0]}</div><div class="bar-track"><div class="bar-fill" style="width:${i[1]/mx*100}%;background:${i[2]}"></div></div><div class="val">${fmt(i[1])}</div></div>`).join('');
+  `<div class="brow"><div class="nm">${i[0]}</div><div class="btrack"><div class="bfill" style="width:${i[1]/mx*100}%;background:${i[2]}"></div></div><div class="vl">${fmt(i[1])}</div></div>`).join('');
 }
 calc();
 
-// scroll animations
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});
-document.querySelectorAll('.fade').forEach(el=>io.observe(el));
-// open day 1 by default
-tog(0);
+/* ---------- countdown ---------- */
+const T0=new Date('2026-08-01T00:45:00+05:30');
+const cd=document.getElementById('cd'),ch=document.getElementById('ch'),
+      cmEl=document.getElementById('cm'),cs=document.getElementById('cs');
+function tick(){
+ let diff=T0-Date.now();
+ const lbl=document.getElementById('countLabel');
+ if(diff<=0){const end=new Date('2026-08-08T19:00:00+05:30');
+  if(Date.now()<end){lbl.textContent='WE ARE ON THE ROAD RIGHT NOW 🏔️';diff=end-Date.now();}
+  else{lbl.textContent='trip done — the group chat is now 90% photos 📸';diff=0;}}
+ cd.textContent=Math.floor(diff/86400000);
+ ch.textContent=Math.floor(diff/3600000)%24;
+ cmEl.textContent=Math.floor(diff/60000)%60;
+ cs.textContent=Math.floor(diff/1000)%60;
+}
+tick();setInterval(tick,1000);
+
+/* ---------- rain ---------- */
+const cv=document.getElementById('rain'),cx=cv.getContext('2d');
+let rainOn=true,drops=[];
+function sizeCv(){cv.width=innerWidth;cv.height=innerHeight;}
+sizeCv();addEventListener('resize',sizeCv);
+for(let i=0;i<90;i++)drops.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,l:8+Math.random()*14,v:4+Math.random()*6,o:.08+Math.random()*.22});
+function rainLoop(){
+ cx.clearRect(0,0,cv.width,cv.height);
+ if(rainOn){cx.lineWidth=1.1;
+  for(const d of drops){cx.strokeStyle=`rgba(160,200,255,${d.o})`;
+   cx.beginPath();cx.moveTo(d.x,d.y);cx.lineTo(d.x-2,d.y+d.l);cx.stroke();
+   d.y+=d.v;d.x-=.6;
+   if(d.y>cv.height){d.y=-20;d.x=Math.random()*(cv.width+40);}}}
+ requestAnimationFrame(rainLoop);}
+rainLoop();
+function toggleRain(){rainOn=!rainOn;document.getElementById('rainBtn').textContent='🌧️ rain: '+(rainOn?'on':'off');}
+
+/* ---------- share ---------- */
+function shareIt(){
+ const data={title:'Ghats Monsoon Loop · Aug 1–8',text:'our trip plan — dates, route, money math, everything. tap around 👇',url:location.href};
+ if(navigator.share){navigator.share(data).catch(()=>{});}
+ else{navigator.clipboard.writeText(location.href).then(()=>alert('link copied — paste it in the group 📋'));}
+}
+
+/* ---------- curtain reveal + wavy title ---------- */
+const tEl=document.getElementById('title');
+tEl.innerHTML=tEl.textContent.split('').map(c=>c===' '?' ':`<span>${c}</span>`).join('');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.06});
+document.querySelectorAll('.curtain').forEach(el=>io.observe(el));
 </script>
 </body>
 </html>
